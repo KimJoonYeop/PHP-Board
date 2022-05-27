@@ -1,0 +1,74 @@
+#title {
+    font-size: 18pt;
+    font-weight: 600;
+}
+
+#loginfrm {
+    width: 960px;
+    margin: 0px auto;
+    text-align: center;
+    margin-top: 100px;
+}
+
+input[type="text"], input[type="password"] {
+    width: 250px;
+    border-radius: 15px;
+    border: #BFC1B9 1px solid;
+    outline-color: #A7CA37;
+    padding: 13px 10px 13px 10px;
+    margin-bottom: 10px;
+}
+
+button[type="submit"] {
+    border: none;
+    background-color: #A7CA37;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 900px;
+    color: white;
+    cursor: pointer;
+    width: 272px;
+    height: 40px;
+    margin-bottom: 10px;
+}
+
+button[type="submit"]:hover {
+    opacity: 0.8;
+}
+
+#idcontrolbox {
+    width: 220px;
+
+}
+
+#idcontrolbox a {
+    margin-right: 20px;
+    font-size: small;
+    color: #586153;
+    opacity: 0.8;
+}
+
+#idcontrolbox a:hover {
+    opacity: 1;
+}
+
+#kakaologin {
+    border: none;
+    background-color: #F7E600;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 900px;
+    color: #3A1D1D;
+    cursor: pointer;
+    width: 250px;
+    height: 40px;
+    margin-bottom: 10px;
+}
+
+#kakaologin:hover {
+    opacity: 0.8
+}
+
+#loginfrm input[type="submit"]:hover {
+    background-color: 7F9730;
+}

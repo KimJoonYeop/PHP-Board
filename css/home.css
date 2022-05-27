@@ -1,0 +1,103 @@
+h1{
+	text-Align: center;
+}
+body {
+	width: 960px;
+	margin: 0px auto;
+	background-color: gray;
+}
+
+#page {
+	background: white;
+	height: 2000px;
+}
+
+#content{
+	padding : 20px;
+}
+
+#footer h3 {
+	text-Align: center;
+	padding-top : 20px;
+}
+
+#menu {
+	margin: 20px 0px;
+	border-top: 1px dotted gray;
+	border-bottom: 1px dotted gray;
+	padding: 20px 0px;
+}
+
+#menu span {
+	padding: 0px 20px;
+}
+
+#menu a {
+	text-decoration: none;
+	font-size: 20px;
+	color: gray;
+	font-weight: bold;
+}
+
+#menu a:hover {
+	color: black;
+}
+
+table{
+	margin: 0px auto;
+	border-collapse : collapse;
+	border : 1px solid black;
+}
+
+tr, th{
+	border : 1px solid black;
+	text-align : center;
+}
+
+th{
+	background-color : gray;
+	color:white;
+}
+
+td, th{
+	padding :10px;
+}
+
+.title{
+	padding:10px;
+	background-color : gray;
+	color:white;
+
+}
+
+table .row:hover{
+	color:green;
+	cursor:pointer;
+}
+
+.pagination {
+   margin: 0px auto;
+   margin-top: 20px;
+   margin-bottom: 20px;
+   text-align:center;
+}
+
+.pagination a {
+   padding: 3px 10px;
+   text-decoration: none;
+}
+
+.pagination .active {
+	background: gray;
+	color: white;
+	
+}
+.pagination a:hover {
+   background-color: #ddd;
+}
+
+.ellipsis{
+		white-space:nowrap;
+		overflow:hidden;
+		text-overflow:ellipsis;
+}

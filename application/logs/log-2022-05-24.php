@@ -194,3 +194,6 @@ ERROR - 2022-05-24 16:05:58 --> Severity: Notice --> Undefined variable: news_it
 ERROR - 2022-05-24 16:05:58 --> Severity: Notice --> Trying to access array offset on value of type null C:\Bitnami\wampstack-7.4.29-0\apache2\htdocs\application\views\news\view.php 2
 ERROR - 2022-05-24 16:05:59 --> Severity: Notice --> Undefined variable: news_itme C:\Bitnami\wampstack-7.4.29-0\apache2\htdocs\application\views\news\view.php 2
 ERROR - 2022-05-24 16:05:59 --> Severity: Notice --> Trying to access array offset on value of type null C:\Bitnami\wampstack-7.4.29-0\apache2\htdocs\application\views\news\view.php 2
+ERROR - 2022-05-24 17:54:49 --> Severity: Notice --> Undefined variable: title C:\Bitnami\wampstack-7.4.29-0\apache2\htdocs\application\views\news\create.php 13
+ERROR - 2022-05-24 17:55:38 --> Severity: Notice --> Undefined property: News::$news_model C:\Bitnami\wampstack-7.4.29-0\apache2\htdocs\application\controllers\News.php 44
+ERROR - 2022-05-24 17:55:38 --> Severity: error --> Exception: Call to a member function set_news() on null C:\Bitnami\wampstack-7.4.29-0\apache2\htdocs\application\controllers\News.php 44
