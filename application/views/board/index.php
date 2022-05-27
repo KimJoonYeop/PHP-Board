@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/home.css">
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
     <title>게시판</title>
 <style>
  #search_area {
@@ -22,7 +23,7 @@
 				<img src='/image/back.jpg' width=960; height=150;/>
 			</div>
 			<div id="menu">
-						<span><a href="/board/index">Home</a></span>
+						<span><a href="/board/index">게시판목록</a></span>
 						<span><a href="/board/create">게시판등록</a></span>
 
 						<?php if( $id == ''){
@@ -39,26 +40,22 @@
 
 			<div id="search_area">
 				<?php echo validation_errors() ?>
-				<form name="frm" method="post" onsubmit="return false">
+				<form name="frm" method="get" onsubmit="return false">
 						<select name="type">
-							<option value="title">제목</option>
-						 	<option value="writer">작성자</option>
+							<option value="title" <?= ($type=='title')?'selected':''?>>제목</option>
+						 	<option value="writer" <?= ($type=='writer')?'selected':''?>>작성자</option>
 						</select>
-						<input type="text" name="search_word" size=20 placeholder='검색어 입력'>
+						<input type="text" name="search_word" value="<?= (!empty($search_word))?$search_word:''?>" size=20 placeholder='검색어 입력'>
 						<button onclick="search(this)" onkeyup="enterkey_search()">검색</button>
 				</form>
 			</div>
 
-			<table>
+			<table id="tbl">
 				<tr>
 					<th width=50px;>번호</th>
 					<th width=450px;>제목</th>
 					<th width=70px;>작성자</th>
 					<th width=155px;>작성일</th>
-					<?php if( $id == 'admin'){
-						echo '<th class="deleteDomain"></th>';
-					}
-					?>
 				</tr>
 				<?php foreach ($board as $board_item): ?>
 					<tr class="row">
@@ -73,6 +70,16 @@
 					</tr>
 				<?php endforeach ?>
 			</table>
+
+			<div class="tbl">
+					<tr>
+						<td class="test"></td>
+					</tr>
+			</div>
+
+			<div>
+				<?php echo $pagination ?>
+			</div>
 			<!-- <?php
 			// var_dump( $prices['apple'] ?? 300 ); # int(300)
 			// var_dump( $prices['banana'] ?? 100 ); # int(100)

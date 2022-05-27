@@ -20,31 +20,37 @@ class Board extends CI_Controller {
     }
 
     //키워드 검색
-    public function search (){
+    public function search ($page = 1){ //url에 param값을 받을 수 있음
         $this->load->library('form_validation');
 
         $data['id'] = $this->session->userdata('id'); 
-        $type = $this->input->post('type',TRUE);
-        $search_word = $this->input->post('search_word', TRUE);
-        $title_word = '';
-        $writer_word = '';
+
+        $data['type'] = $this->input->get('type',TRUE); //pagination이 form이 아닌 location으로 데이터를 전송하기 때문에 get으로 받아야함
+        $data['search_word'] = $this->input->get('search_word', TRUE);
+
+        // $title_word = '';
+        // $writer_word = '';
         
-        if($type == 'title'){
-            $title_word = $search_word;
-            $writer_word = '';
-        }else if($type == 'writer'){
-            $title_word = '';
-            $writer_word = $search_word;
-        }else{
-            $title_word = '';
-            $writer_word = '';
-        }
-        var_dump($type);
-        var_dump($title_word);
-        var_dump($writer_word);
-        var_dump($search_word);
-        $data['board'] = $this->Board_model->get_board_list($title_word, $writer_word)->result_array(); #컨트롤러 딴에서 데이터 받기
-    
+        // if($data['type'] == 'title'){
+        //     $title_word = $data['search_word'];
+        //     $writer_word = '';
+        // }else if($data['type'] == 'writer'){
+        //     $title_word = '';
+        //     $writer_word = $data['search_word'];
+        // }else{
+        //     $title_word = '';
+        //     $writer_word = '';
+        // }
+
+        $per_page = 5;
+        $start = ($page-1) * $per_page;
+        $data['total_rows'] = $this->Board_model->board_list_count($data['type'], $data['search_word']);
+        $data['pagination'] = $this->common_pagination('/board/search', $data['total_rows'], $per_page);
+
+        //log_message('debug', json_encode(array('total_rows' => $total_rows, 'per_page' => $per_page, 'start' => $start, 'page' => $page), JSON_UNESCAPED_UNICODE));
+        $data['board'] = $this->Board_model->get_board_list($data['type'], $data['search_word'], $start, $per_page)->result_array();
+        
+        // echo json_encode($data['board'], JSON_UNESCAPED_UNICODE);
         $this->load->view('board/index', $data);
     }
 
@@ -64,6 +70,44 @@ class Board extends CI_Controller {
         
     }
 
+    //페이지네이션 테스트
+    public function ptest(){
+       $data['board_list_count'] = $this->Board_model->board_list_count(5)->row_array();
+       var_dump( (int)$data['test']['Tboard_list_count']);
+    }
+    
+    //페이지네이션
+    public function common_pagination($base_url='', $total_rows, $per_page){
+        $config['base_url']= "$base_url"; //페이징 주소
+        $config['num_links'] = 2;//선택된 페이지번호 좌우로 몇개의 “숫자”링크를 보여줄지 설정
+        $config['total_rows']=$total_rows;//전체 게시물 수
+        $config['use_page_numbers'] = TRUE;//실제 페이지 번호를 보여주고 싶다면, TRUE
+        $config['page_query_string'] = FALSE;
+        $config['reuse_query_string'] = TRUE;//
+        $config['query_string_segment'] ="page";  //쿼리스트링 역할을 해줌 
+        $config['per_page']=$per_page; //한 페이지에 표시할 게시물 수
+        $config['uri_segment']=3; //페이지 번호가 위치한 세그먼트
+        $config['full_tag_open'] = '<p class="pagination">';//감싸는 태그
+        $config['full_tag_close'] = '</p>';//감싸는 태그
+        $config['cur_tag_open'] = '<span class="page-item"><a href="javascript:void(0);" class="active">';//현재 페이지 링크의 여는 태그
+        $config['cur_tag_close'] = '</a></span>';
+        $config['num_tag_open'] = '<span class="page-item">';//숫자태그
+        $config['num_tag_close'] = '</span>';
+        $config['first_tag_open'] = '<span class="page-item">';//감싸는 태그
+        $config['first_tag_close'] = '</span>';//감싸는 태그
+        $config['last_tag_open'] = '<span class="page-item">';//감싸는 태그
+        $config['last_tag_close'] = '</span>';//감싸는 태그
+        $config['prev_tag_open'] = '<span class="page-item">';//감싸는 태그
+        $config['prev_tag_close'] = '</span>';//감싸는 태그
+        $config['next_tag_open'] = '<span class="page-item">';//감싸는 태그
+        $config['next_tag_close'] = '</span>';//감싸는 태그
+        $config['prev_link'] = '<';
+        $config['next_link'] = '>';
+        $config['first_link'] = FALSE;
+        $config['last_link'] = FALSE;
+        $this->pagination->initialize($config);//페이지네이션 초기화
+        return $this->pagination->create_links();       
+    }
     //게시글 수정
     public function update($bno = NULL){
         $this->load->library('form_validation');
