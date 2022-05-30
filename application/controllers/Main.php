@@ -29,6 +29,7 @@ class Main extends CI_Controller {
         {   
             $id = $this->input->post('id');
             $password = $this->input->post('password');
+
             $can_login = $this->Main_model->can_login($id, $password);
             $data['session'] = $can_login->row_array();
             //model_function

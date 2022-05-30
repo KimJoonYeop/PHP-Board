@@ -12,7 +12,7 @@ class Board_model extends CI_Model {
         
         // $this->db->select('bno', 'title', 'content', 'writer', 'regdate');
          // $query = $this->db->get('board');
-        $sql ="SELECT bno, title, content, writer, regdate 
+        $sql ="SELECT bno, title, content, writer, regdate, files 
                 FROM board 
                 WHERE delete_check = 'N'";
                 
@@ -53,11 +53,11 @@ class Board_model extends CI_Model {
     //게시글 등록
     public function board_insert($data_arr)   
     {
-        $sql = "INSERT INTO board(title, content, writer) 
+        $sql = "INSERT INTO board(title, content, writer, files) 
                 values('".$data_arr['title']."', 
                 '".$data_arr['content']."', 
-                '".$data_arr['writer']."')";
-
+                '".$data_arr['writer']."',
+                '".$data_arr['files']."')";
         $this->db->query($sql);
     }
 

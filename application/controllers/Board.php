@@ -6,6 +6,7 @@ class Board extends CI_Controller {
         parent::__construct();
         $this->load->database();
         $this->load->model('Board_model');
+        $this->load->library('form_validation');
       
     }
     
@@ -21,7 +22,7 @@ class Board extends CI_Controller {
 
     //키워드 검색
     public function search ($page = 1){ //url에 param값을 받을 수 있음
-        $this->load->library('form_validation');
+        
 
         $data['id'] = $this->session->userdata('id'); 
 
@@ -56,15 +57,29 @@ class Board extends CI_Controller {
 
     //게시글 상세보기 및 수정 & 리뷰 출력
     public function view($bno = NULL){   
-       
+        $data['id'] = $this->session->userdata('id');
         $data['board_item'] = $this->Board_model->get($bno)->row_array();
+       
+        $files = explode(',', $data['board_item']['files'], 3);
+        $files1 = '';
+        $files2 = '';
+        $files3 = '';
+
+        if(!empty($files[0])){$files1 = $files[0];}
+        if(!empty($files[1])){$files2 = $files[1];}
+        if(!empty($files[2])){$files3 = $files[2];}
+
+        $data['files1'] = $files1;
+        $data['files2'] = $files2;
+        $data['files3'] = $files3;
+
         $data['reply_list'] = $this->Board_model->reply_list($bno)->result_array();
         // var_dump($data['reply_list']);
         // exit;
         // $test = $data['board_item']['bno'];
         // var_dump($test);
         // exit;
-        $data['id'] = $this->session->userdata('id');
+       
 
         $this->load->view('board/view' , $data);
         
@@ -110,7 +125,6 @@ class Board extends CI_Controller {
     }
     //게시글 수정
     public function update($bno = NULL){
-        $this->load->library('form_validation');
 
         $this->form_validation->set_rules('title', '게시판 제목을 입력해주세요', 'required');
         $this->form_validation->set_rules('content', '게시판 내용을 입력해주세요', 'required');
@@ -139,34 +153,72 @@ class Board extends CI_Controller {
     //게시글 등록
     public function create()
     {
-        #$this->load->helper('form');
-        $this->load->library('form_validation');
-
-        $this->form_validation->set_rules('title', 'Title을 입력해주세요', 'required');
-        $this->form_validation->set_rules('content', 'text를 입력해주세요', 'required');
-
-        $data['title'] = '게시판 등록';
         $data['id'] = $this->session->userdata('id');
-
-        $title = $this->input->post('title', TRUE);
-        $content = $this->input->post('content', TRUE);
-        $writer = $data['id'];
+       
+        $data['title'] = '게시판 등록';
+       
+        $this->load->view('board/create', $data);
+     
         
-        $data_arr = array(
-            'title' => $title,
-            'content' => $content,
-            'writer' => $writer
-        );
+    }
+    
 
-        if ( $this->form_validation->run() === FALSE )
-        {
-            $this->load->view('board/create', $data);
-        }
-        else
-        {
-            $this->Board_model->board_insert($data_arr);
-            redirect('/board','refresh');
-        }
+    //게시글 등록
+    public function insert(){
+         #$this->load->helper('form');
+         $this->load->library('upload');
+         $this->form_validation->set_rules('title', 'Title을 입력해주세요', 'required');
+         $this->form_validation->set_rules('content', 'text를 입력해주세요', 'required');
+ 
+         $data['id'] = $this->session->userdata('id');
+         $writer = $data['id'];
+
+         if($_FILES["files"]["name"] != ''){
+             $config["upload_path"] = './image/';
+             $config['allowed_types'] = 'gif|jpg|jpeg|png';
+
+             
+             for($count = 0; $count < count($_FILES["files"]["name"]); $count++){
+                 $_FILES["file"]["name"] = $_FILES["files"]["name"][$count];
+                 $_FILES["file"]["type"] = $_FILES["files"]["type"][$count];
+                 $_FILES["file"]["tmp_name"] = $_FILES["files"]["tmp_name"][$count];
+                 $_FILES["file"]["error"] = $_FILES["files"]["error"][$count];
+                 $_FILES["file"]["size"] = $_FILES["files"]["size"][$count];
+                 $this->upload->initialize($config);
+                 $this->upload->do_upload('file');
+                 $img[] = $this->upload->data();
+             }
+         }
+         
+         $data['title'] = '게시판 등록';
+         $title = $this->input->post('title', TRUE);
+         $content = $this->input->post('content', TRUE);
+         $img1 = '';
+         $img2 = '';
+         $img3 = '';
+
+         if(!empty($img[0]['file_name'])){
+            $img1 = $img[0]['file_name'];
+         }
+         if(!empty($img[1]['file_name'])){
+            $img2 = ',';
+            $img2 .= $img[1]['file_name'];
+         }
+         if(!empty($img[2]['file_name'])){
+            $img3 = ',';
+            $img3 .= $img[2]['file_name'];
+         }      
+
+         $data_arr = array(
+             'title' => $title,
+             'content' => $content,
+             'writer' => $writer,
+             'files' => $img1.$img2.$img3
+         );
+ 
+        $this->Board_model->board_insert($data_arr);
+        redirect('/board','refresh');
+
     }
 
     //유저 게시글 삭제
@@ -189,6 +241,12 @@ class Board extends CI_Controller {
             $this->Board_model->admin_delete($bno);
             redirect('/board','refresh');
         }
+    }
+    
+    //파일 다운로드
+    public function files_down(){
+        $this->load->helper('download');
+        force_download($name, $data);
     }
 
     //리뷰 등록

@@ -14,7 +14,8 @@
             margin : 0px auto; 
             border : 1px solid;
             width : 800px; 
-            height : 400px;
+            min-height : 400px;
+            max-height : 500px;
             padding : 25px;
             overflow : hidden;
         }
@@ -66,7 +67,7 @@
 <body>
     <div id="page"> <br/>
         <?php echo validation_errors(); ?>
-        <form method="post" name="frm" onsubmit="return false">
+        <form method="post" name="frm" onsubmit="return false" enctype="multipart/form-data">
         <h1>게시판</h1>
         <div id="header">
 				<img src='/image/back.jpg' width=960; height=150;/>
@@ -78,7 +79,7 @@
 						<?php if( $id == ''){ ?>
                              <span style="float:right;"><a href="/main/login_validation">로그인</a></span>
                         <?php }else{ ?>
-                             <span style="float:right;"><a href="/main/logout"><span>'.$id.'님 환영합니다!</span>로그아웃</a></span>
+                             <span style="float:right;"><a href="/main/logout"><span><?= $id.'님 환영합니다!'?></span>로그아웃</a></span>
                         <?php } ?>
 
 
@@ -101,6 +102,21 @@
                              echo $board_item['regdate'];
                          } ?>
                     </p>
+                <div id="board_image">
+                    <?php if( !empty($files1) ){ ?>
+                        <?php echo '<img class="photo" width = 100; height = 100;" src="http://localhost/image/'.$files1.'">' ?>
+                        <?php echo '<input type="text" style="display:none"; name="file_path[]" value="'.$files1.','.$files2.','.$files3.'">'?>
+                    <?php  } ?>
+
+                    <?php if( !empty($files2) ){ ?>
+                        <?php echo '<img class="photo" width = 100; height = 100;" value="http://localhost/image/'.$files2.'";   src="http://localhost/image/'.$files2.'">' ?>
+                    <?php  } ?>
+                    <?php if( !empty($files3) ){ ?>
+                        <?php echo '<img class="photo" width = 100; height = 100;" value="http://localhost/image/'.$files3.'";  src="http://localhost/image/'.$files3.'">' ?>
+                    <?php  } ?>
+                    
+                </div>
+                </br> 
                 <div style="text-align : center;">
                     <textarea disabled id="content" name="content"><?php echo $board_item['content']?></textarea>
                 </div>
@@ -112,6 +128,11 @@
                             <button id="btnUpdate" onclick="form_update(this)">수정</button>
                             <button id="btnDelete" onclick="form_delete(this)">삭제</button>
                             <button id="btnCancel" type="reset">취소</button>
+                        </div>
+                        <br/>
+                        <div align ='right';>
+                            <button id='partial_down'>선택 다운로드</button>
+                            <button id="total_down" onclick="down_submit()">전체 다운로드</button>
                         </div>
                 <?php
                     }
@@ -153,6 +174,7 @@
                                 <button class="btnUpdateR" data-index="<?= $reply['rno']?>">수정</button> &nbsp; 
                                 <button class="btnDelete"  data-index="<?= $reply['rno']?>" onclick="form_delete2(this)">삭제</button>
                             </div>
+                           
                     <?php
                         }
                     ?>	
@@ -183,7 +205,6 @@
     
     let bno ='<?= $board_item['bno']?>';
     
-   
     //게시글 수정버튼 클릭시
     btnUpdate.addEventListener("click",function(e){
         btnUpdate.style.display='none';
@@ -207,7 +228,12 @@
         frm.submit();
     }
 
+    //게시글 
+    function down_submit(){
     
+        frm.action='/downLoad';
+        frm.submit();
+    }
 
     //리뷰등록 버튼 클릭시
     function form_submit2(){

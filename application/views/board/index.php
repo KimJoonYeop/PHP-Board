@@ -40,7 +40,7 @@
 
 			<div id="search_area">
 				<?php echo validation_errors() ?>
-				<form name="frm" method="get" onsubmit="return false">
+				<form name="frm" method="get" enctype="multipart/form-data" onsubmit="return false">
 						<select name="type">
 							<option value="title" <?= ($type=='title')?'selected':''?>>제목</option>
 						 	<option value="writer" <?= ($type=='writer')?'selected':''?>>작성자</option>
@@ -54,13 +54,18 @@
 				<tr>
 					<th width=50px;>번호</th>
 					<th width=450px;>제목</th>
+					<th with=50px;>File</th>	 
 					<th width=70px;>작성자</th>
 					<th width=155px;>작성일</th>
+					<?php if( $id == 'admin'){ ?>
+						<th>삭제</th>
+					<?php } ?>						
 				</tr>
 				<?php foreach ($board as $board_item): ?>
 					<tr class="row">
 						<td><?= $board_item['bno']?></td>
 						<td class="board_read" bno="<?= $board_item['bno']?>"><?= $board_item['title']?></td>
+						<td><?php echo ($board_item['files'] == null) ? 'X'  : 'O' ?></td>
 						<td><?= $board_item['writer']?></td>
 						<td><?= $board_item['regdate']?></td>
 						<?php if( $id == 'admin'){
