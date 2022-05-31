@@ -17,11 +17,11 @@ class Board_model extends CI_Model {
                 WHERE delete_check = 'N'";
                 
         if(!empty($search_word)){
-            $sql .= " AND {$type} like '%{$search_word}%'";
+            $sql .= " AND ".$this->db->escape_str($type)." like '%".$this->db->escape_like_str($search_word)."%' ESCAPE '!'";
         }
 
         $sql .= " ORDER BY bno DESC
-                LIMIT ".$start.", ".$per_page."";
+                LIMIT ".$this->db->escape($start).", ".$this->db->escape($per_page)."";
 
         return $this->db->query($sql);
      
@@ -31,34 +31,39 @@ class Board_model extends CI_Model {
   public function board_list_count($type, $search_word)
   {
       // , CAST(COUNT(bno) AS DOUBLE) /'".$per_page."' AS TOTALPAGE
-      
+    // $type1 = $this->db->escape_str($type);
+    // $search_word1 = $this->db->escape_str($search_word);
     $sql = "SELECT count(bno) TOTALCOUNT 
         FROM board
         WHERE delete_check = 'N'";
     
     if(!empty($search_word)){
-        $sql .= " AND {$type} like '%{$search_word}%'";
+        $sql .=  " AND ".$this->db->escape_str($type)." like '%".$this->db->escape_like_str($search_word)."%'";
     }
-            
+    //$this->db->escape_like_str($search_word)
     return $this->db->query($sql)->row()->TOTALCOUNT;
 
   }
 
     //게시글 상세보기
-    public function get($bno){
-        $query = $this->db->get_where('board', array('bno' => $bno));
-        return $query;
+    public function get($bno){;
+        $sql = "select bno, title, content, writer, regdate, updatedate, delete_check, files from board where bno =".$this->db->escape_str($bno);
+
+        return $this->db->query($sql);
     }
 
     //게시글 등록
     public function board_insert($data_arr)   
     {
         $sql = "INSERT INTO board(title, content, writer, files) 
-                values('".$data_arr['title']."', 
-                '".$data_arr['content']."', 
-                '".$data_arr['writer']."',
-                '".$data_arr['files']."')";
-        $this->db->query($sql);
+                values(?,?,?,?)";
+        $this->db->query(
+            $sql, array(
+            $data_arr['title'], 
+            $data_arr['content'], 
+            $data_arr['writer'], 
+            $data_arr['files'])
+        );
     }
 
     //게시글 수정
@@ -109,22 +114,22 @@ class Board_model extends CI_Model {
     //리뷰 등록
     public function reply_insert($data_arr){
         $sql ="INSERT INTO reply(bno, reply, id) 
-        VALUES('".$data_arr['bno']."', 
-        '".$data_arr['reply']."', 
-        '".$data_arr['id']."')";
+        VALUES(?, ?, ?)";
 
-        $this->db->query($sql);
+        $this->db->query(
+            $sql, array($data_arr['bno'], $data_arr['reply'], $data_arr['id'])
+        );
     }
 
     //리뷰 수정
     public function reply_update($reply, $rno){
-        $sql ="UPDATE reply SET reply = '{$reply}', updateDate=now() WHERE rno = '{$rno}'";
+        $sql ="UPDATE reply SET reply = '{$reply}', updateDate=now() WHERE rno = '".$this->db->escape_str($rno)."'";
         return $this->db->query($sql);
     }
 
     //리뷰 삭제
     public function reply_delete($rno){
-        $sql ="DELETE FROM reply WHERE rno = '{$rno}'";
+        $sql ="DELETE FROM reply WHERE rno = '".$this->db->escape_str($rno)."'";
         $this->db->query($sql);
     }
 }

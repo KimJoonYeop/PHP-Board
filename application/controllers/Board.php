@@ -6,8 +6,6 @@ class Board extends CI_Controller {
         parent::__construct();
         $this->load->database();
         $this->load->model('Board_model');
-        $this->load->library('form_validation');
-      
     }
     
     //게시글 목록
@@ -55,11 +53,22 @@ class Board extends CI_Controller {
         $this->load->view('board/index', $data);
     }
 
-    //게시글 상세보기 및 수정 & 리뷰 출력
-    public function view($bno = NULL){   
+    //게시글 상세보기  & 리뷰 출력
+    public function view($bno = null){   
+        // $headers = apache_request_headers();
+        // $hostName = $headers['Host'];
+        // $hostReffer = $headers['Referer'];
+        // var_dump($headers);
+        // var_dump($hostName);
+        // var_dump($hostReffer);
+        // exit;
+        var_dump($_SERVER['REQUEST_URI']);
+        var_dump(API_URI);
+        exit;
         $data['id'] = $this->session->userdata('id');
+
         $data['board_item'] = $this->Board_model->get($bno)->row_array();
-       
+        
         $files = explode(',', $data['board_item']['files'], 3);
         $files1 = '';
         $files2 = '';
@@ -72,7 +81,10 @@ class Board extends CI_Controller {
         $data['files1'] = $files1;
         $data['files2'] = $files2;
         $data['files3'] = $files3;
-
+        $data['csrf'] = array(
+            'name' => $this->security->get_csrf_token_name(),
+            'hash' => $this->security->get_csrf_hash()
+        );
         $data['reply_list'] = $this->Board_model->reply_list($bno)->result_array();
         // var_dump($data['reply_list']);
         // exit;
@@ -154,7 +166,7 @@ class Board extends CI_Controller {
     public function create()
     {
         $data['id'] = $this->session->userdata('id');
-       
+        
         $data['title'] = '게시판 등록';
        
         $this->load->view('board/create', $data);
@@ -251,12 +263,12 @@ class Board extends CI_Controller {
 
     //리뷰 등록
     public function review_insert($bno){
-        $this->load->library('form_validation');
+        
 
         $this->form_validation->set_rules('reply', '리뷰내용을 입력해주세요', 'required');
 
         $data['id'] = $this->session->userdata('id');
-
+        
         $reply = $this->input->post('reply', TRUE);
         $id = $data['id'];
 
@@ -274,7 +286,6 @@ class Board extends CI_Controller {
 
     //리뷰 수정
     public function review_update($rno, $bno){
-        $this->load->library('form_validation');
 
         // $uri_string = uri_string();
         // var_dump($uri_string);

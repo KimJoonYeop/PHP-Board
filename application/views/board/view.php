@@ -68,6 +68,9 @@
     <div id="page"> <br/>
         <?php echo validation_errors(); ?>
         <form method="post" name="frm" onsubmit="return false" enctype="multipart/form-data">
+        <input type="hidden" name="<?=$csrf['name'];?>" value="<?=$csrf['hash'];?>"/>
+        <!-- <input type="hidden" id="csrf_token" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>"> -->
+
         <h1>게시판</h1>
         <div id="header">
 				<img src='/image/back.jpg' width=960; height=150;/>
@@ -105,12 +108,12 @@
                 <div id="board_image">
                     <?php if( !empty($files1) ){ ?>
                         <?php echo '<img class="photo" width = 100; height = 100;" src="http://localhost/image/'.$files1.'">' ?>
-                        <?php echo '<input type="text" style="display:none"; name="file_path[]" value="'.$files1.','.$files2.','.$files3.'">'?>
                     <?php  } ?>
 
                     <?php if( !empty($files2) ){ ?>
                         <?php echo '<img class="photo" width = 100; height = 100;" value="http://localhost/image/'.$files2.'";   src="http://localhost/image/'.$files2.'">' ?>
                     <?php  } ?>
+
                     <?php if( !empty($files3) ){ ?>
                         <?php echo '<img class="photo" width = 100; height = 100;" value="http://localhost/image/'.$files3.'";  src="http://localhost/image/'.$files3.'">' ?>
                     <?php  } ?>
@@ -123,20 +126,21 @@
                 <?php 
                     if( $id == $board_item['writer'] ){
                 ?>
-                        <div style="text-align : right; margin-top : 5px;">
+                        <div id="test" style="text-align : right; margin-top : 5px;">
                             <button id="btnSubmit" style="display:none;" onclick="form_submit(this)">수정완료</button>
-                            <button id="btnUpdate" onclick="form_update(this)">수정</button>
+                            <button id="btnUpdate">수정</button>
                             <button id="btnDelete" onclick="form_delete(this)">삭제</button>
                             <button id="btnCancel" type="reset">취소</button>
                         </div>
-                        <br/>
-                        <div align ='right';>
-                            <button id='partial_down'>선택 다운로드</button>
-                            <button id="total_down" onclick="down_submit()">전체 다운로드</button>
-                        </div>
+        
                 <?php
                     }
                 ?>
+                 <?php if( !empty($files1) ){ ?>
+                 <div align ='right'; style="margin-top : 10px;">
+                            <button id="total_down" onclick="down_submit()"><a href="<?php echo '/download?file_name='.$files1.','.$files2.','.$files3 ?>">다운로드</a></button>
+                        </div>
+                <?php } ?>
             </div> <br/>
     
         <div style="width:850px; margin : 0px auto;">
@@ -204,16 +208,27 @@
     let reviewText = document.querySelectorAll('.reviewText');
     
     let bno ='<?= $board_item['bno']?>';
-    
+    //이미지 클릭
+    function image_click(){
+        let img = document.getElementsByClassName('photo');
+            for(let i=0; i < img.length; i++){
+                img[i].addEventListener('click',function(){
+                    window.open(this.src);
+                });
+            }
+    }
+    image_click();
+
     //게시글 수정버튼 클릭시
-    btnUpdate.addEventListener("click",function(e){
+    if( document.getElementById('test') != null){
+        btnUpdate.addEventListener("click",function(e){
         btnUpdate.style.display='none';
         btnSubmit.style.display='';
         title.removeAttribute('disabled');
         content.removeAttribute('disabled');-
         title.focus();
     });
-
+    }
     //게시글 수정완료버튼 클릭시
     function form_submit(node){
         if(confirm('게시글을 수정하시겠습니까?')){
@@ -268,25 +283,29 @@
     Checksize();
 
     //리뷰 수정 & 완료
-    for(i=0; i < btnUpdateR.length; i++){
-        btnUpdateR[i].addEventListener("click", function(e){
-            let re = $(this).parent().parent();
-            re.find('.btnUpdateR').css({display : 'none'});
-            re.find('.btnUpdateF').css({display : ''});
-            re.find('.reviewText').prop('disabled', false);
-            re.find('.reviewText').focus();
-        });
-        // btnUpdateF[i].addEventListener("click", function(e){
-        //     let rec = $(this).parent().parent();
-        //     let rno= rec.find('.reviewText').data('no'); //dataset.no, jquery : data('no')
-            
-
-        //     if(!confirm('수정하시겠습니까??')) return;
+    function review_update(){
+            for(i=0; i < btnUpdateR.length; i++){
+            btnUpdateR[i].addEventListener("click", function(e){
+                let re = $(this).parent().parent();
+                re.find('.btnUpdateR').css({display : 'none'});
+                re.find('.btnUpdateF').css({display : ''});
+                re.find('.reviewText').prop('disabled', false);
+                re.find('.reviewText').focus();
+            });
+            // btnUpdateF[i].addEventListener("click", function(e){
+            //     let rec = $(this).parent().parent();
+            //     let rno= rec.find('.reviewText').data('no'); //dataset.no, jquery : data('no')
                 
-        //         frm.action= `/board/review_update/${rno}/${bno}`;
-        //         frm.submit();
-        //     });
+
+            //     if(!confirm('수정하시겠습니까??')) return;
+                    
+            //         frm.action= `/board/review_update/${rno}/${bno}`;
+            //         frm.submit();
+            //     });
+        }
     }
+    review_update();
+    
 
     //리뷰 삭제
     function form_delete2(node){
@@ -297,5 +316,6 @@
             frm.submit();
         }
     }
+    
 </script>
 </html>

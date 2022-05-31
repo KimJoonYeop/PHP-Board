@@ -37,17 +37,17 @@
 						<span style="float:right;"><a href="/user/logout"><span>${uid}님 환영합니다!</span>로그아웃</a></span>
             </c:if> -->
 			</div>
-
+			<?php echo validation_errors() ?>
+			<form name="frm" method="get" enctype="multipart/form-data" onsubmit="return false">
 			<div id="search_area">
-				<?php echo validation_errors() ?>
-				<form name="frm" method="get" enctype="multipart/form-data" onsubmit="return false">
+			
 						<select name="type">
 							<option value="title" <?= ($type=='title')?'selected':''?>>제목</option>
 						 	<option value="writer" <?= ($type=='writer')?'selected':''?>>작성자</option>
 						</select>
 						<input type="text" name="search_word" value="<?= (!empty($search_word))?$search_word:''?>" size=20 placeholder='검색어 입력'>
 						<button onclick="search(this)" onkeyup="enterkey_search()">검색</button>
-				</form>
+				
 			</div>
 
 			<table id="tbl">
@@ -64,7 +64,7 @@
 				<?php foreach ($board as $board_item): ?>
 					<tr class="row">
 						<td><?= $board_item['bno']?></td>
-						<td class="board_read" bno="<?= $board_item['bno']?>"><?= $board_item['title']?></td>
+						<td class="board_read" name = 'bno' bno="<?= $board_item['bno']?>"><?= $board_item['title']?></td>
 						<td><?php echo ($board_item['files'] == null) ? 'X'  : 'O' ?></td>
 						<td><?= $board_item['writer']?></td>
 						<td><?= $board_item['regdate']?></td>
@@ -90,6 +90,7 @@
 			// var_dump( $prices['banana'] ?? 100 ); # int(100)
 			// var_dump( $prices['lemon'] ?? 100 ); # int(200)
 			?> -->
+			</form>
      </div>
 </body>
 <script>
@@ -100,11 +101,9 @@
 	for(i=0; i < board_read.length; i++){
 		let bno = board_read[i].getAttribute('bno');
 		board_read[i].addEventListener("click", function(){
-			// alert(bno);
-			location.href="/board/view/" + bno;
-	});
+			location.href='/board/view/' + bno;
+		});
 	}
-
 	for(i=0; i < btnDelete.length; i++){
 		
 		btnDelete[i].addEventListener("click", function(){

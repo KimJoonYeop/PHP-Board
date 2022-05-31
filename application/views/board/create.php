@@ -92,7 +92,20 @@
 </body>
 <script>
     let id= '<?php echo $id?>';
-
+    $('#files').change(function(){
+        let files = $('#files')[0].files;
+        let error = '';
+        let form_data = new FormData();
+        for(let count = 0; count<files.length; count++)
+        {
+            let name = files[count].name;
+            let extension = name.split('.').pop().toLowerCase(); //배열의 마지막 요소제거, 제거된 요소 리턴문자열의 알파벳 전부 소문자로
+            if(jQuery.inArray(extension, ['png', 'jpg', 'jpeg']) == -1){
+                error += 'Invalid' + count + " Image File";
+                alert(error);
+        }
+    }
+});
     function frm_submit(){
         let files = $('#files')[0].files;
         let count = files.length;
