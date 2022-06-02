@@ -43,6 +43,7 @@
         <div class="container">
             <br /><br /><br />
             <form method="post" action="/main/login_validation" name="frm" style="position : relative; top : -40px;">
+                <input type="hidden" id="csrf_token" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
                 <p id="title">로그인</p>
                 <div class="form-group">
                     <input type="text" name="id" class="form-control" placeholder='Id'/>

@@ -23,8 +23,8 @@
 				<img src='/image/back.jpg' width=960; height=150;/>
 			</div>
 			<div id="menu">
-						<span><a href="/board/index">게시판목록</a></span>
-						<span><a href="/board/create">게시판등록</a></span>
+						<span><a href="/board">게시판목록</a></span>
+						<span><a href="/board/insert">게시판등록</a></span>
 
 						<?php if( $id == ''){
                              echo '<span style="float:right;"><a href="/main/login_validation">로그인</a></span>';

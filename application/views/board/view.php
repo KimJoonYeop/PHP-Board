@@ -76,7 +76,7 @@
 				<img src='/image/back.jpg' width=960; height=150;/>
 			</div>
 			<div id="menu">
-						<span><a href="/board/index">게시판목록</a></span>
+						<span><a href="/board">게시판목록</a></span>
 						<span><a href="/board/create">게시판등록</a></span>
 
 						<?php if( $id == ''){ ?>
@@ -208,7 +208,8 @@
     let reviewText = document.querySelectorAll('.reviewText');
     
     let bno ='<?= $board_item['bno']?>';
-    //이미지 클릭
+
+    //이미지 클릭 시 원본 파일
     function image_click(){
         let img = document.getElementsByClassName('photo');
             for(let i=0; i < img.length; i++){
@@ -255,6 +256,7 @@
         let reply = document.frm.reply.value;
         if(reply == ''){
             alert('리뷰 내용을 입력해주세요!');
+            return;
         }
         if(confirm('리뷰를 등록하시겠습니까?')){
             frm.action = `/board/review_insert/${bno}`;

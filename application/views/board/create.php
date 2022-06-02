@@ -39,8 +39,8 @@
             <img src='/image/back.jpg' width=960; height=150; />
         </div>
         <div id="menu">
-            <span><a href="/board/index">게시판목록</a></span>
-            <span><a href="/board/create">게시판등록</a></span>
+            <span><a href="/board">게시판목록</a></span>
+            <span><a href="/board/insert">게시판등록</a></span>
 
             <?php if( $id == ''){
                              echo '<span style="float:right;"><a href="/main/login_validation">로그인</a></span>';
@@ -56,7 +56,8 @@
         <?php echo validation_errors(); ?>
         </br></br></br>
 
-        <form action="/board/insert" name="frm" method="get" enctype="multipart/form-data" onsubmit='return false'>
+        <form action="/board/insert" name="frm" method="post" enctype="multipart/form-data" onsubmit='return false'>
+            <input type="hidden" id="csrf_token" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>">
             <div style="text-align : center;">
                 <input name="title" type="text" placeholder="게시글 제목">
             </div>

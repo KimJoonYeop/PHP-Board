@@ -7,56 +7,37 @@ class Board_model extends CI_Model {
     }
 
     //게시글 목록
-    public function get_board_list($type, $search_word, $start, $per_page)
-    {
-        
-        // $this->db->select('bno', 'title', 'content', 'writer', 'regdate');
-         // $query = $this->db->get('board');
-        $sql ="SELECT bno, title, content, writer, regdate, files 
-                FROM board 
-                WHERE delete_check = 'N'";
-                
+    public function get_board_list($type, $search_word, $start, $per_page) {
+        $sql ="SELECT bno, title, content, writer, regdate, files FROM board WHERE delete_check = 'N' ";
         if(!empty($search_word)){
-            $sql .= " AND ".$this->db->escape_str($type)." like '%".$this->db->escape_like_str($search_word)."%' ESCAPE '!'";
+            $sql .= "AND ".$this->db->escape_str($type)." LIKE '%".$this->db->escape_like_str($search_word)."%' ESCAPE '!' ";
         }
-
-        $sql .= " ORDER BY bno DESC
-                LIMIT ".$this->db->escape($start).", ".$this->db->escape($per_page)."";
-
+        $sql .= "ORDER BY bno DESC LIMIT ".$this->db->escape($start).", ".$this->db->escape($per_page);
         return $this->db->query($sql);
-     
     }
 
   //게시글 Total count
-  public function board_list_count($type, $search_word)
-  {
+  public function board_list_count($type, $search_word) {
       // , CAST(COUNT(bno) AS DOUBLE) /'".$per_page."' AS TOTALPAGE
-    // $type1 = $this->db->escape_str($type);
-    // $search_word1 = $this->db->escape_str($search_word);
-    $sql = "SELECT count(bno) TOTALCOUNT 
-        FROM board
-        WHERE delete_check = 'N'";
+    $sql = "SELECT COUNT(bno) AS totalcount FROM board WHERE delete_check = 'N' ";
     
     if(!empty($search_word)){
-        $sql .=  " AND ".$this->db->escape_str($type)." like '%".$this->db->escape_like_str($search_word)."%'";
+        $sql .=  "AND ".$this->db->escape_str($type)." LIKE '%".$this->db->escape_like_str($search_word)."%' ";
     }
     //$this->db->escape_like_str($search_word)
-    return $this->db->query($sql)->row()->TOTALCOUNT;
-
+    return $this->db->query($sql);
   }
 
     //게시글 상세보기
-    public function get($bno){;
+    public function board_view($bno){;
         $sql = "select bno, title, content, writer, regdate, updatedate, delete_check, files from board where bno =".$this->db->escape_str($bno);
 
         return $this->db->query($sql);
     }
 
     //게시글 등록
-    public function board_insert($data_arr)   
-    {
-        $sql = "INSERT INTO board(title, content, writer, files) 
-                values(?,?,?,?)";
+    public function board_insert($data_arr)   {
+        $sql = "INSERT INTO board(title, content, writer, files) values(?,?,?,?)";
         $this->db->query(
             $sql, array(
             $data_arr['title'], 
@@ -69,12 +50,7 @@ class Board_model extends CI_Model {
     //게시글 수정
     public function board_update($title, $content, $bno){   // '".$data_arr['title']."' -> '김민우'
         //$today = date("Y-m-d h:i:s");
-        $sql = "UPDATE board
-                set title = ?, 
-                    content = ?,
-                    updatedate = now()
-                WHERE bno = ?";
-
+        $sql = "UPDATE board set title = ?, content = ?, updatedate = now() WHERE bno = ?";
         $this->db->query(
             $sql,
             array($title, $content, $bno)
@@ -98,24 +74,13 @@ class Board_model extends CI_Model {
     //리뷰 목록
     public function reply_list($bno){
         // SELECT r.rno AS 'test',
-        $sql = "SELECT r.rno,
-                    r.bno,
-                    r.reply,
-                    r.id,
-                    r.replyDate,
-                    r.updateDate
-                FROM reply r
-                WHERE r.bno = '{$bno}'
-                ORDER BY r.rno DESC";
-
+        $sql = "SELECT r.rno, r.bno, r.reply, r.id, r.replyDate, r.updateDate FROM reply r WHERE r.bno = '{$bno}' ORDER BY r.rno DESC";
         return $this->db->query($sql);
     }
     
     //리뷰 등록
     public function reply_insert($data_arr){
-        $sql ="INSERT INTO reply(bno, reply, id) 
-        VALUES(?, ?, ?)";
-
+        $sql ="INSERT INTO reply(bno, reply, id) VALUES(?, ?, ?)";
         $this->db->query(
             $sql, array($data_arr['bno'], $data_arr['reply'], $data_arr['id'])
         );
